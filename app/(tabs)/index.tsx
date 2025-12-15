@@ -6,6 +6,7 @@ import {
   Search,
   TrendingDown,
   TrendingUp,
+  Wallet,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
@@ -20,8 +21,15 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
-  const { expenses, loading, getMonthlyTotal, getTodayTotal, getWeeklyTotal } =
-    useExpenseContext();
+  const {
+    expenses,
+    balance,
+    loading,
+    getMonthlyTotal,
+    getMonthlyIncome,
+    getTodayTotal,
+    getWeeklyTotal,
+  } = useExpenseContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
 
@@ -55,6 +63,29 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>Expense Tracker</Text>
         <Text style={styles.subtitle}>Track your spending</Text>
+      </View>
+
+      {/* Summary Cards */}
+      <View style={styles.balanceCard}>
+        <View style={styles.balanceHeader}>
+          <Wallet size={24} color="#fff" />
+          <Text style={styles.balanceTitle}>Current Balance</Text>
+        </View>
+        <Text style={styles.balanceAmount}>${balance.toFixed(2)}</Text>
+        <View style={styles.balanceDetails}>
+          <View style={styles.balanceDetail}>
+            <Text style={styles.balanceDetailLabel}>Monthly Income</Text>
+            <Text style={styles.balanceDetailValue}>
+              +${getMonthlyIncome().toFixed(2)}
+            </Text>
+          </View>
+          <View style={styles.balanceDetail}>
+            <Text style={styles.balanceDetailLabel}>Monthly Expenses</Text>
+            <Text style={styles.balanceDetailValue}>
+              +${getMonthlyIncome().toFixed(2)}
+            </Text>
+          </View>
+        </View>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -185,6 +216,47 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: "#6B7280",
+  },
+  balanceCard: {
+    backgroundColor: "#3B82F6",
+    borderRadius: 16,
+    padding: 20,
+    margin: 20,
+    marginBottom: 0,
+  },
+  balanceHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 8,
+  },
+  balanceTitle: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#fff",
+  },
+  balanceAmount: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#fff",
+    marginBottom: 16,
+  },
+  balanceDetails: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  balanceDetail: {
+    flex: 1,
+  },
+  balanceDetailLabel: {
+    fontSize: 12,
+    color: "#BFDBFE",
+    marginBottom: 4,
+  },
+  balanceDetailValue: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#fff",
   },
   summaryContainer: {
     flexDirection: "row",
