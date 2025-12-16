@@ -4,6 +4,7 @@ import {
   ChartPie as PieChart,
   Plus,
   Settings,
+  Wallet,
 } from "lucide-react-native";
 
 export default function TabLayout() {
@@ -39,6 +40,13 @@ export default function TabLayout() {
         options={{
           title: "Add",
           tabBarIcon: ({ size, color }) => <Plus size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="income"
+        options={{
+          title: "Income",
+          tabBarIcon: ({ size, color }) => <Wallet size={size} color={color} />,
         }}
       />
       <Tabs.Screen
