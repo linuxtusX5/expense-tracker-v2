@@ -11,8 +11,14 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AnalyticsScreen() {
-  const { expenses, getMonthlyTotal, getCategoryTotals, getMonthlyExpenses } =
-    useExpenseContext();
+  const {
+    expenses,
+    balance,
+    getMonthlyTotal,
+    getMonthlyIncome,
+    getCategoryTotals,
+    getMonthlyExpenses,
+  } = useExpenseContext();
   const currency = useCurrencyStore((state) => state.currency);
   const symbol = currency === "USD" ? "$" : "₱";
 
@@ -22,6 +28,7 @@ export default function AnalyticsScreen() {
     (sum, expense) => sum + expense.amount,
     0
   );
+  const monthlyIncome = getMonthlyIncome();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -32,6 +39,24 @@ export default function AnalyticsScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Overview Stats */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <View style={styles.statHeader}>
+              <TrendingUp size={20} color="#10B981" />
+              <Text style={styles.statTitle}>Current Balance</Text>
+            </View>
+            <Text
+              style={[
+                styles.statAmount,
+                { color: balance >= 0 ? "#10B981" : "#EF4444" },
+              ]}
+            >
+              {symbol}
+              {balance.toFixed(2)}
+            </Text>
+          </View>
+        </View>
+
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
             <View style={styles.statHeader}>
@@ -48,6 +73,29 @@ export default function AnalyticsScreen() {
             <View style={styles.statHeader}>
               <Calendar size={20} color="#10B981" />
               <Text style={styles.statTitle}>This Month</Text>
+            </View>
+            <Text style={styles.statAmount}>
+              {symbol}
+              {getMonthlyTotal().toFixed(2)}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <View style={styles.statHeader}>
+              <TrendingUp size={20} color="#10B981" />
+              <Text style={styles.statTitle}>Monthly Income</Text>
+            </View>
+            <Text style={styles.statAmount}>
+              {symbol}
+              {monthlyIncome.toFixed(2)}
+            </Text>
+          </View>
+          <View style={styles.statCard}>
+            <View style={styles.statHeader}>
+              <TrendingUp size={20} color="#10B981" />
+              <Text style={styles.statTitle}>Monthly Expenses</Text>
             </View>
             <Text style={styles.statAmount}>
               {symbol}
