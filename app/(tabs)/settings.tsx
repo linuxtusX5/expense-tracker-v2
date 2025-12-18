@@ -3,6 +3,7 @@ import { useExpenseContext } from "@/contexts/ExpenseContext";
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
+
 import {
   ChevronRight,
   DollarSign,
@@ -26,10 +27,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
-  const { expenses, clearAllExpenses } = useExpenseContext();
+  const { expenses, income, balance, clearAllExpenses } = useExpenseContext();
   const { logout } = useAuth();
   const currency = useCurrencyStore((state) => state.currency);
   const setCurrency = useCurrencyStore((state) => state.setCurrency);
+  const symbol = currency === "USD" ? "$" : "₱";
   const [name, setName] = useState("");
 
   const handleCurrencyChange = (selectedCurrency: "USD" | "PHP") => {
@@ -74,6 +76,8 @@ export default function SettingsScreen() {
     (sum, expense) => sum + expense.amount,
     0
   );
+  const totalIncomeEntries = income.length;
+  const totalIncomeAmount = income.reduce((sum, inc) => sum + inc.amount, 0);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -102,7 +106,7 @@ export default function SettingsScreen() {
         <View style={styles.section}>
           <View style={styles.Profile}>
             <Image
-              source={require("@/assets/icon/profile.png")}
+              source={require("@/assets/icon/user.png")}
               style={styles.icon}
             />
             <Text style={styles.name}>{name}</Text>
@@ -130,6 +134,27 @@ export default function SettingsScreen() {
 
           <View style={styles.statRow}>
             <View style={styles.statInfo}>
+              <Text style={styles.statLabel}>Current Balance</Text>
+              <Text
+                style={[
+                  styles.statValue,
+                  { color: balance >= 0 ? "#10B981" : "#EF4444" },
+                ]}
+              >
+                {symbol}
+                {balance.toFixed(2)}
+              </Text>
+            </View>
+            {currency === "USD" ? (
+              <DollarSign size={20} color="#6B7280" />
+            ) : (
+              <Text style={{ fontSize: 20, color: "#6B7280" }}>
+                <PhilippinePeso size={20} color="#6B7280" />
+              </Text>
+            )}
+          </View>
+          <View style={styles.statRow}>
+            <View style={styles.statInfo}>
               <Text style={styles.statLabel}>Total Expenses</Text>
               <Text style={styles.statValue}>{totalExpenses}</Text>
             </View>
@@ -138,12 +163,38 @@ export default function SettingsScreen() {
 
           <View style={styles.statRow}>
             <View style={styles.statInfo}>
-              <Text style={styles.statLabel}>Total Amount</Text>
+              <Text style={styles.statLabel}>Total Income Entries</Text>
+              <Text style={styles.statValue}>{totalIncomeEntries}</Text>
+            </View>
+            <FileText size={20} color="#6B7280" />
+          </View>
+
+          <View style={styles.statRow}>
+            <View style={styles.statInfo}>
+              <Text style={styles.statLabel}>Total Expenses Amount</Text>
               <Text style={styles.statValue}>
-                {currency === "USD" ? "$" : "₱"}
+                {symbol}
                 {totalAmount.toFixed(2)}
               </Text>
             </View>
+            {currency === "USD" ? (
+              <DollarSign size={20} color="#6B7280" />
+            ) : (
+              <Text style={{ fontSize: 20, color: "#6B7280" }}>
+                <PhilippinePeso size={20} color="#6B7280" />
+              </Text>
+            )}
+          </View>
+
+          <View style={styles.statRow}>
+            <View style={styles.statInfo}>
+              <Text style={styles.statLabel}>Total Income Amount</Text>
+              <Text style={styles.statValue}>
+                {symbol}
+                {totalIncomeAmount.toFixed(2)}
+              </Text>
+            </View>
+
             {currency === "USD" ? (
               <DollarSign size={20} color="#6B7280" />
             ) : (
