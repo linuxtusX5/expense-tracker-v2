@@ -1,4 +1,5 @@
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
+import { formatMoney } from "@/utils/formatMoney";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -44,7 +45,8 @@ export function MonthlyTrend({ data }: MonthlyTrendProps) {
               <View key={month} style={styles.barContainer}>
                 <Text style={styles.amount}>
                   {symbol}
-                  {amount.toFixed(0)}
+                  {/* {amount.toFixed(0)} */}
+                  {formatMoney(amount)}
                 </Text>
                 <View style={styles.barWrapper}>
                   <View style={[styles.bar, { height }]} />
