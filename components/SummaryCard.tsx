@@ -1,4 +1,5 @@
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
+import { formatMoney } from "@/utils/formatMoney";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -20,7 +21,7 @@ export function SummaryCard({ title, amount, icon, color }: SummaryCardProps) {
       </View>
       <Text style={[styles.amount, { color }]}>
         {symbol}
-        {amount.toFixed(2)}
+        {formatMoney(amount)}
       </Text>
     </View>
   );
