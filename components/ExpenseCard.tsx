@@ -1,5 +1,6 @@
 import { Expense, useExpenseContext } from "@/contexts/ExpenseContext";
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
+import { formatMoney } from "@/utils/formatMoney";
 import { Trash2 } from "lucide-react-native";
 import React from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -93,7 +94,7 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
         <View style={styles.rightSection}>
           <Text style={styles.amount}>
             -{symbol}
-            {expense.amount.toFixed(2)}
+            {formatMoney(expense.amount)}
           </Text>
           <View style={styles.actions}>
             <TouchableOpacity
