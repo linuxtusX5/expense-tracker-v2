@@ -2,6 +2,7 @@ import { CategoryChart } from "@/components/CategoryChart";
 import { MonthlyTrend } from "@/components/MonthlyTrend";
 import { useExpenseContext } from "@/contexts/ExpenseContext";
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
+import { formatMoney } from "@/utils/formatMoney";
 import {
   Calendar,
   ChartPie as PieChartIcon,
@@ -52,7 +53,7 @@ export default function AnalyticsScreen() {
               ]}
             >
               {symbol}
-              {balance.toFixed(2)}
+              {formatMoney(balance)}
             </Text>
           </View>
         </View>
@@ -65,7 +66,7 @@ export default function AnalyticsScreen() {
             </View>
             <Text style={styles.statAmount}>
               {symbol}
-              {totalExpenses.toFixed(2)}
+              {formatMoney(totalExpenses)}
             </Text>
           </View>
 
@@ -76,7 +77,8 @@ export default function AnalyticsScreen() {
             </View>
             <Text style={styles.statAmount}>
               {symbol}
-              {getMonthlyTotal().toFixed(2)}
+              {/* {getMonthlyTotal().toFixed(2)} */}
+              {formatMoney(getMonthlyTotal())}
             </Text>
           </View>
         </View>
@@ -89,7 +91,8 @@ export default function AnalyticsScreen() {
             </View>
             <Text style={styles.statAmount}>
               {symbol}
-              {monthlyIncome.toFixed(2)}
+              {/* {monthlyIncome.toFixed(2)} */}
+              {formatMoney(monthlyIncome)}
             </Text>
           </View>
           <View style={styles.statCard}>
@@ -99,7 +102,8 @@ export default function AnalyticsScreen() {
             </View>
             <Text style={styles.statAmount}>
               {symbol}
-              {getMonthlyTotal().toFixed(2)}
+              {/* {getMonthlyTotal().toFixed(2)} */}
+              {formatMoney(getMonthlyTotal())}
             </Text>
           </View>
         </View>
@@ -140,7 +144,8 @@ export default function AnalyticsScreen() {
                 </View>
                 <Text style={styles.categoryAmount}>
                   {symbol}
-                  {total.toFixed(2)}
+                  {/* {total.toFixed(2)} */}
+                  {formatMoney(total)}
                 </Text>
               </View>
             );
