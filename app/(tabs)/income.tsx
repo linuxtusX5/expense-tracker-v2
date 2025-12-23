@@ -1,8 +1,12 @@
 import { useExpenseContext } from "@/contexts/ExpenseContext";
+import { INCOME_SOURCES } from "@/data/Source";
+import { useCurrencyStore } from "@/stores/useCurrencyStore";
+import { formatMoney } from "@/utils/formatMoney";
 import {
   Briefcase,
   DollarSign,
   FileText,
+  PhilippinePeso,
   Plus,
   Trash2,
 } from "lucide-react-native";
@@ -18,15 +22,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const INCOME_SOURCES = [
-  { id: "salary", name: "Salary", color: "#10B981" },
-  { id: "freelance", name: "Freelance", color: "#3B82F6" },
-  { id: "business", name: "Business", color: "#8B5CF6" },
-  { id: "investment", name: "Investment", color: "#F59E0B" },
-  { id: "gift", name: "Gift", color: "#EF4444" },
-  { id: "other", name: "Other", color: "#6B7280" },
-];
+import Toast from "react-native-toast-message";
 
 export default function IncomeScreen() {
   const { income, addIncome, deleteIncome, balance, setInitialBalance } =
@@ -37,6 +33,8 @@ export default function IncomeScreen() {
   const [loading, setLoading] = useState(false);
   const [showBalanceSetup, setShowBalanceSetup] = useState(false);
   const [initialBalanceAmount, setInitialBalanceAmount] = useState("");
+  const currency = useCurrencyStore((state) => state.currency);
+  const symbol = currency === "USD" ? "$" : "₱";
 
   const handleAddIncome = async () => {
     if (!amount || !description || !selectedSource) {
@@ -46,7 +44,12 @@ export default function IncomeScreen() {
 
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) {
-      Alert.alert("Error", "Please enter a valid amount");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please enter a valid amount",
+        position: "top",
+      });
       return;
     }
 
@@ -63,10 +66,19 @@ export default function IncomeScreen() {
       setAmount("");
       setDescription("");
       setSelectedSource("");
-
-      Alert.alert("Success", "Income added successfully!");
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Income added successfully!",
+        position: "top",
+      });
     } catch (error) {
-      Alert.alert("Error", "Failed to add income");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to add income",
+        position: "top",
+      });
     } finally {
       setLoading(false);
     }
@@ -90,7 +102,12 @@ export default function IncomeScreen() {
   const handleSetInitialBalance = async () => {
     const numericAmount = parseFloat(initialBalanceAmount);
     if (isNaN(numericAmount)) {
-      Alert.alert("Error", "Please enter a valid amount");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please enter a valid amount",
+        position: "top",
+      });
       return;
     }
 
@@ -98,9 +115,19 @@ export default function IncomeScreen() {
       await setInitialBalance(numericAmount);
       setInitialBalanceAmount("");
       setShowBalanceSetup(false);
-      Alert.alert("Success", "Initial balance set successfully!");
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Initial balance set successfully!",
+        position: "top",
+      });
     } catch (error) {
-      Alert.alert("Error", "Failed to set initial balance");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to set initial balance",
+        position: "top",
+      });
     }
   };
 
@@ -136,7 +163,10 @@ export default function IncomeScreen() {
             </View>
           </View>
           <View style={styles.incomeRight}>
-            <Text style={styles.incomeAmount}>+${item.amount.toFixed(2)}</Text>
+            <Text style={styles.incomeAmount}>
+              +{symbol}
+              {formatMoney(item.amount)}
+            </Text>
             <TouchableOpacity
               style={styles.deleteButton}
               onPress={() => handleDeleteIncome(item.id)}
@@ -161,7 +191,10 @@ export default function IncomeScreen() {
         <View style={styles.balanceSection}>
           <Text style={styles.sectionTitle}>Current Balance</Text>
           <View style={styles.balanceCard}>
-            <Text style={styles.balanceAmount}>${balance.toFixed(2)}</Text>
+            <Text style={styles.balanceAmount}>
+              {symbol}
+              {formatMoney(balance)}
+            </Text>
             <TouchableOpacity
               style={styles.setBalanceButton}
               onPress={() => setShowBalanceSetup(!showBalanceSetup)}
@@ -206,7 +239,13 @@ export default function IncomeScreen() {
           <View style={styles.inputSection}>
             <Text style={styles.label}>Amount</Text>
             <View style={styles.inputContainer}>
-              <DollarSign size={20} color="#6B7280" />
+              {currency === "USD" ? (
+                <DollarSign size={20} color="#6B7280" />
+              ) : (
+                <Text style={{ fontSize: 20, color: "#6B7280" }}>
+                  <PhilippinePeso size={20} color="#6B7280" />
+                </Text>
+              )}
               <TextInput
                 style={styles.textInput}
                 placeholder="0.00"
