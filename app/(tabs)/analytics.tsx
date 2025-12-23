@@ -56,9 +56,7 @@ export default function AnalyticsScreen() {
               {formatMoney(balance)}
             </Text>
           </View>
-        </View>
 
-        <View style={styles.statsContainer}>
           <View style={styles.statCard}>
             <View style={styles.statHeader}>
               <TrendingUp size={20} color="#3B82F6" />
@@ -67,18 +65,6 @@ export default function AnalyticsScreen() {
             <Text style={styles.statAmount}>
               {symbol}
               {formatMoney(totalExpenses)}
-            </Text>
-          </View>
-
-          <View style={styles.statCard}>
-            <View style={styles.statHeader}>
-              <Calendar size={20} color="#10B981" />
-              <Text style={styles.statTitle}>This Month</Text>
-            </View>
-            <Text style={styles.statAmount}>
-              {symbol}
-              {/* {getMonthlyTotal().toFixed(2)} */}
-              {formatMoney(getMonthlyTotal())}
             </Text>
           </View>
         </View>
@@ -95,10 +81,11 @@ export default function AnalyticsScreen() {
               {formatMoney(monthlyIncome)}
             </Text>
           </View>
+
           <View style={styles.statCard}>
             <View style={styles.statHeader}>
-              <TrendingUp size={20} color="#10B981" />
-              <Text style={styles.statTitle}>Monthly Expenses</Text>
+              <Calendar size={20} color="#10B981" />
+              <Text style={styles.statTitle}>This Month</Text>
             </View>
             <Text style={styles.statAmount}>
               {symbol}
