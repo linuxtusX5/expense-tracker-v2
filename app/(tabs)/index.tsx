@@ -1,6 +1,8 @@
 import { ExpenseCard } from "@/components/ExpenseCard";
 import { SummaryCard } from "@/components/SummaryCard";
 import { useExpenseContext } from "@/contexts/ExpenseContext";
+import { useCurrencyStore } from "@/stores/useCurrencyStore";
+import { formatMoney } from "@/utils/formatMoney";
 import {
   Calendar,
   Search,
@@ -32,6 +34,8 @@ export default function HomeScreen() {
   } = useExpenseContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const currency = useCurrencyStore((state) => state.currency);
+  const symbol = currency === "USD" ? "$" : "₱";
 
   const filteredExpenses = expenses.filter((expense) => {
     const matchesSearch =
@@ -71,18 +75,23 @@ export default function HomeScreen() {
           <Wallet size={24} color="#fff" />
           <Text style={styles.balanceTitle}>Current Balance</Text>
         </View>
-        <Text style={styles.balanceAmount}>${balance.toFixed(2)}</Text>
+        <Text style={styles.balanceAmount}>
+          {symbol}
+          {formatMoney(balance)}
+        </Text>
         <View style={styles.balanceDetails}>
           <View style={styles.balanceDetail}>
             <Text style={styles.balanceDetailLabel}>Monthly Income</Text>
             <Text style={styles.balanceDetailValue}>
-              +${getMonthlyIncome().toFixed(2)}
+              +{symbol}
+              {formatMoney(getMonthlyIncome())}
             </Text>
           </View>
           <View style={styles.balanceDetail}>
             <Text style={styles.balanceDetailLabel}>Monthly Expenses</Text>
             <Text style={styles.balanceDetailValue}>
-              +${getMonthlyIncome().toFixed(2)}
+              -{symbol}
+              {formatMoney(getTodayTotal())}
             </Text>
           </View>
         </View>
