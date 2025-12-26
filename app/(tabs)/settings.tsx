@@ -4,6 +4,7 @@ import { useCurrencyStore } from "@/stores/useCurrencyStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 
+import { formatMoney } from "@/utils/formatMoney";
 import {
   ChevronRight,
   DollarSign,
@@ -142,7 +143,8 @@ export default function SettingsScreen() {
                 ]}
               >
                 {symbol}
-                {balance.toFixed(2)}
+                {/* {balance.toFixed(2)} */}
+                {formatMoney(balance)}
               </Text>
             </View>
             {currency === "USD" ? (
@@ -174,7 +176,8 @@ export default function SettingsScreen() {
               <Text style={styles.statLabel}>Total Expenses Amount</Text>
               <Text style={styles.statValue}>
                 {symbol}
-                {totalAmount.toFixed(2)}
+                {/* {totalAmount.toFixed(2)} */}
+                {formatMoney(totalAmount)}
               </Text>
             </View>
             {currency === "USD" ? (
@@ -191,7 +194,8 @@ export default function SettingsScreen() {
               <Text style={styles.statLabel}>Total Income Amount</Text>
               <Text style={styles.statValue}>
                 {symbol}
-                {totalIncomeAmount.toFixed(2)}
+                {/* {totalIncomeAmount.toFixed(2)} */}
+                {formatMoney(totalIncomeAmount)}
               </Text>
             </View>
 
@@ -268,7 +272,7 @@ export default function SettingsScreen() {
               </View>
               <View style={styles.settingText}>
                 <Text style={styles.settingLabel}>Expense Tracker</Text>
-                <Text style={styles.settingDescription}>Version 1.0.0</Text>
+                <Text style={styles.settingDescription}>Version 2.0.0</Text>
               </View>
             </View>
           </View>
