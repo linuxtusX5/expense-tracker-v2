@@ -23,23 +23,23 @@ export interface Income {
 
 interface ExpenseContextType {
   expenses: Expense[];
-  income: Income[];
-  balance: number;
+  // income: Income[];
+  // balance: number;
   loading: boolean;
   addExpense: (expense: ExpenseData) => Promise<void>;
-  addIncome: (income: Omit<Income, "id">) => Promise<void>;
+  // addIncome: (income: Omit<Income, "id">) => Promise<void>;
   deleteExpense: (id: string) => Promise<void>;
-  deleteIncome: (id: string) => Promise<void>;
+  // deleteIncome: (id: string) => Promise<void>;
   updateExpense: (id: string, expense: Partial<ExpenseData>) => Promise<void>;
-  updateIncome: (id: string, income: Partial<Income>) => Promise<void>;
+  // updateIncome: (id: string, income: Partial<Income>) => Promise<void>;
   clearAllExpenses: () => Promise<void>;
   setInitialBalance: (amount: number) => Promise<void>;
   // refreshExpenses: () => Promise<void>;
   getTodayTotal: () => number;
   getWeeklyTotal: () => number;
   getMonthlyTotal: () => number;
-  getTotalIncome: () => number;
-  getMonthlyIncome: () => number;
+  // getTotalIncome: () => number;
+  // getMonthlyIncome: () => number;
   getCategoryTotals: () => Record<string, number>;
   getMonthlyExpenses: () => Record<string, number>;
 }
@@ -58,38 +58,21 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
 
   // Load expenses from API on app start
   useEffect(() => {
-    loadExpenses();
-    loadIncome();
-    loadInitialBalance();
+    refreshExpenses();
+    // loadExpenses();
+    // loadIncome();
+    // loadInitialBalance();
   }, []);
 
-  // const refreshExpenses = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await expensesAPI.getExpenses({ limit: 100 });
-  //     const expensesWithDates = response.expenses.map((expense: any) => ({
-  //       ...expense,
-  //       date: new Date(expense.date),
-  //     }));
-  //     setExpenses(expensesWithDates);
-  //   } catch (error) {
-  //     console.error("Error loading expenses:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  const loadExpenses = async () => {
+  const refreshExpenses = async () => {
     try {
-      const storedExpenses = await AsyncStorage.getItem(STORAGE_KEY);
-      if (storedExpenses) {
-        const parsedExpenses = JSON.parse(storedExpenses).map(
-          (expense: any) => ({
-            ...expense,
-            date: new Date(expense.date),
-          })
-        );
-        setExpenses(parsedExpenses);
-      }
+      setLoading(true);
+      const response = await expensesAPI.getExpenses({ limit: 100 });
+      const expensesWithDates = response.expenses.map((expense: any) => ({
+        ...expense,
+        date: new Date(expense.date),
+      }));
+      setExpenses(expensesWithDates);
     } catch (error) {
       console.error("Error loading expenses:", error);
     } finally {
@@ -97,31 +80,50 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const loadIncome = async () => {
-    try {
-      const storedIncome = await AsyncStorage.getItem(INCOME_STORAGE_KEY);
-      if (storedIncome) {
-        const parsedIncome = JSON.parse(storedIncome).map((income: any) => ({
-          ...income,
-          date: new Date(income.date),
-        }));
-        setIncome(parsedIncome);
-      }
-    } catch (error) {
-      console.error("Error loading income:", error);
-    }
-  };
+  // const loadExpenses = async () => {
+  //   try {
+  //     const storedExpenses = await AsyncStorage.getItem(STORAGE_KEY);
+  //     if (storedExpenses) {
+  //       const parsedExpenses = JSON.parse(storedExpenses).map(
+  //         (expense: any) => ({
+  //           ...expense,
+  //           date: new Date(expense.date),
+  //         })
+  //       );
+  //       setExpenses(parsedExpenses);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error loading expenses:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const loadInitialBalance = async () => {
-    try {
-      const storedBalance = await AsyncStorage.getItem(BALANCE_STORAGE_KEY);
-      if (storedBalance) {
-        setInitialBalanceState(parseFloat(storedBalance));
-      }
-    } catch (error) {
-      console.error("Error loading initial balance:", error);
-    }
-  };
+  // const loadIncome = async () => {
+  //   try {
+  //     const storedIncome = await AsyncStorage.getItem(INCOME_STORAGE_KEY);
+  //     if (storedIncome) {
+  //       const parsedIncome = JSON.parse(storedIncome).map((income: any) => ({
+  //         ...income,
+  //         date: new Date(income.date),
+  //       }));
+  //       setIncome(parsedIncome);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error loading income:", error);
+  //   }
+  // };
+
+  // const loadInitialBalance = async () => {
+  //   try {
+  //     const storedBalance = await AsyncStorage.getItem(BALANCE_STORAGE_KEY);
+  //     if (storedBalance) {
+  //       setInitialBalanceState(parseFloat(storedBalance));
+  //     }
+  //   } catch (error) {
+  //     console.error("Error loading initial balance:", error);
+  //   }
+  // };
 
   const saveExpenses = async (newExpenses: Expense[]) => {
     try {
@@ -131,24 +133,24 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const saveIncome = async (newIncome: Income[]) => {
-    try {
-      await AsyncStorage.setItem(INCOME_STORAGE_KEY, JSON.stringify(newIncome));
-    } catch (error) {
-      console.error("Error saving income:", error);
-    }
-  };
+  // const saveIncome = async (newIncome: Income[]) => {
+  //   try {
+  //     await AsyncStorage.setItem(INCOME_STORAGE_KEY, JSON.stringify(newIncome));
+  //   } catch (error) {
+  //     console.error("Error saving income:", error);
+  //   }
+  // };
 
-  const addIncome = async (incomeData: Omit<Income, "id">) => {
-    const newIncome: Income = {
-      ...incomeData,
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-    };
+  // const addIncome = async (incomeData: Omit<Income, "id">) => {
+  //   const newIncome: Income = {
+  //     ...incomeData,
+  //     id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+  //   };
 
-    const updatedIncome = [newIncome, ...income];
-    setIncome(updatedIncome);
-    await saveIncome(updatedIncome);
-  };
+  //   const updatedIncome = [newIncome, ...income];
+  //   setIncome(updatedIncome);
+  //   await saveIncome(updatedIncome);
+  // };
 
   const addExpense = async (expenseData: ExpenseData) => {
     try {
@@ -164,11 +166,11 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const deleteIncome = async (id: string) => {
-    const updatedIncome = income.filter((inc) => inc.id !== id);
-    setIncome(updatedIncome);
-    await saveIncome(updatedIncome);
-  };
+  // const deleteIncome = async (id: string) => {
+  //   const updatedIncome = income.filter((inc) => inc.id !== id);
+  //   setIncome(updatedIncome);
+  //   await saveIncome(updatedIncome);
+  // };
 
   const deleteExpense = async (id: string) => {
     try {
@@ -180,13 +182,13 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateIncome = async (id: string, updates: Partial<Income>) => {
-    const updatedIncome = income.map((inc) =>
-      inc.id === id ? { ...inc, ...updates } : inc
-    );
-    setIncome(updatedIncome);
-    await saveIncome(updatedIncome);
-  };
+  // const updateIncome = async (id: string, updates: Partial<Income>) => {
+  //   const updatedIncome = income.map((inc) =>
+  //     inc.id === id ? { ...inc, ...updates } : inc
+  //   );
+  //   setIncome(updatedIncome);
+  //   await saveIncome(updatedIncome);
+  // };
 
   const updateExpense = async (id: string, updates: Partial<ExpenseData>) => {
     try {
@@ -233,18 +235,18 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
       .reduce((total, expense) => total + expense.amount, 0);
   };
 
-  const getTotalIncome = () => {
-    return income.reduce((total, inc) => total + inc.amount, 0);
-  };
+  // const getTotalIncome = () => {
+  //   return income.reduce((total, inc) => total + inc.amount, 0);
+  // };
 
-  const getMonthlyIncome = () => {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  // const getMonthlyIncome = () => {
+  //   const now = new Date();
+  //   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    return income
-      .filter((inc) => new Date(inc.date) >= startOfMonth)
-      .reduce((total, inc) => total + inc.amount, 0);
-  };
+  //   return income
+  //     .filter((inc) => new Date(inc.date) >= startOfMonth)
+  //     .reduce((total, inc) => total + inc.amount, 0);
+  // };
 
   const getWeeklyTotal = () => {
     const now = new Date();
@@ -285,32 +287,32 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
     return monthlyTotals;
   };
 
-  const balance =
-    initialBalance +
-    getTotalIncome() -
-    expenses.reduce((total, expense) => total + expense.amount, 0);
+  // const balance =
+  //   initialBalance +
+  //   getTotalIncome() -
+  //   expenses.reduce((total, expense) => total + expense.amount, 0);
   const value: ExpenseContextType = {
     expenses: expenses.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     ),
-    income: income.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    ),
+    // income: income.sort(
+    //   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    // ),
     loading,
-    balance,
+    // balance,
     addExpense,
-    addIncome,
+    // addIncome,
     deleteExpense,
-    deleteIncome,
+    // deleteIncome,
     updateExpense,
-    updateIncome,
+    // updateIncome,
     clearAllExpenses,
     setInitialBalance,
     getTodayTotal,
     getWeeklyTotal,
     getMonthlyTotal,
-    getTotalIncome,
-    getMonthlyIncome,
+    // getTotalIncome,
+    // getMonthlyIncome,
     getCategoryTotals,
     getMonthlyExpenses,
   };
