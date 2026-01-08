@@ -1,9 +1,10 @@
+<div style="display: flex">
 <img src="./assets/images/UI/1.jpg" width="200" />
 <img src="./assets/images/UI/2.jpg" width="200" />
 <img src="./assets/images/UI/3.jpg" width="200" />
 <img src="./assets/images/UI/4.jpg" width="200" />
 <img src="./assets/images/UI/5.jpg" width="200" />
-
+</div>
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
