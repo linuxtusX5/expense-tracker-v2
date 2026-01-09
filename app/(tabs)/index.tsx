@@ -1,6 +1,7 @@
 import { ExpenseCard } from "@/components/ExpenseCard";
 import { SummaryCard } from "@/components/SummaryCard";
 import { useExpenseContext } from "@/contexts/ExpenseContext";
+import { useIncome } from "@/contexts/IncomeContext";
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
 import { formatMoney } from "@/utils/formatMoney";
 import {
@@ -25,13 +26,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function HomeScreen() {
   const {
     expenses,
-    balance,
+    // balance,
     loading,
     getMonthlyTotal,
-    getMonthlyIncome,
+    // getMonthlyIncome,
     getTodayTotal,
     getWeeklyTotal,
   } = useExpenseContext();
+  const { totalIncome } = useIncome();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
   const currency = useCurrencyStore((state) => state.currency);
@@ -47,6 +49,14 @@ export default function HomeScreen() {
   });
 
   const categories = Array.from(new Set(expenses.map((e) => e.category)));
+  // ✅ Calculate total expenses
+  const totalExpenses = expenses.reduce(
+    (sum, expense) => sum + expense.amount,
+    0
+  );
+
+  // ✅ Final balance
+  const balance = totalIncome - totalExpenses;
 
   if (loading) {
     return (
@@ -84,14 +94,14 @@ export default function HomeScreen() {
             <Text style={styles.balanceDetailLabel}>Monthly Income</Text>
             <Text style={styles.balanceDetailValue}>
               +{symbol}
-              {formatMoney(getMonthlyIncome())}
+              {formatMoney(totalIncome)}
             </Text>
           </View>
           <View style={styles.balanceDetail}>
             <Text style={styles.balanceDetailLabel}>Monthly Expenses</Text>
             <Text style={styles.balanceDetailValue}>
               -{symbol}
-              {formatMoney(getTodayTotal())}
+              {formatMoney(getMonthlyTotal())}
             </Text>
           </View>
         </View>
