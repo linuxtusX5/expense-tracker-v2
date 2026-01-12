@@ -3,6 +3,7 @@ import AuthScreen from "@/components/AuthScreen";
 import OnboardingScreen from "@/components/OnboardingScreen";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ExpenseProvider } from "@/contexts/ExpenseContext";
+import { IncomeProvider } from "@/contexts/IncomeContext";
 import { useFrameworkReady } from "@/hooks/useFrameworkReady";
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
 import { toastConfig } from "@/toastConfig";
@@ -60,10 +61,12 @@ function AppContent() {
   }
 
   return (
-    <ExpenseProvider>
-      <Slot />
-      <Toast config={toastConfig} />
-    </ExpenseProvider>
+    <IncomeProvider>
+      <ExpenseProvider>
+        <Slot />
+        <Toast config={toastConfig} />
+      </ExpenseProvider>
+    </IncomeProvider>
   );
 }
 
