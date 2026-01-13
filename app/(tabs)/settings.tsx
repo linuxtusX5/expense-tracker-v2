@@ -1,5 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useExpenseContext } from "@/contexts/ExpenseContext";
+import { useIncome } from "@/contexts/IncomeContext";
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
@@ -28,7 +29,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
-  const { expenses, income, balance, clearAllExpenses } = useExpenseContext();
+  const { expenses, clearAllExpenses } = useExpenseContext();
+  const { income, totalIncome } = useIncome();
   const { logout } = useAuth();
   const currency = useCurrencyStore((state) => state.currency);
   const setCurrency = useCurrencyStore((state) => state.setCurrency);
@@ -72,13 +74,23 @@ export default function SettingsScreen() {
     Alert.alert("Export Data", "Export feature coming soon!");
   };
 
+  // Total expense entries
   const totalExpenses = expenses.length;
+
+  // Total expense amount
   const totalAmount = expenses.reduce(
     (sum, expense) => sum + expense.amount,
     0
   );
+
+  // Total income entries
   const totalIncomeEntries = income.length;
-  const totalIncomeAmount = income.reduce((sum, inc) => sum + inc.amount, 0);
+
+  // Total income amount (already computed in context, but safe)
+  const totalIncomeAmount = totalIncome;
+
+  // Balance
+  const balance = totalIncomeAmount - totalAmount;
 
   useEffect(() => {
     const loadUser = async () => {
