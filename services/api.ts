@@ -7,28 +7,48 @@ const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_API;
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
 });
 
 // Add auth token to requests
+// api.interceptors.request.use(async (config) => {
+//   const token = await AsyncStorage.getItem("authToken");
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
+
+// // Handle auth errors
+// api.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     if (error.response?.status === 401) {
+//       await AsyncStorage.removeItem("authToken");
+//       await AsyncStorage.removeItem("user");
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 api.interceptors.request.use(async (config) => {
-  const token = await AsyncStorage.getItem("authToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const isAuthRoute =
+    config.url?.includes("/auth/login") ||
+    config.url?.includes("/auth/register");
+
+  if (!isAuthRoute) {
+    const token = await AsyncStorage.getItem("authToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  } else {
+    delete config.headers.Authorization;
   }
+
   return config;
 });
-
-// Handle auth errors
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      await AsyncStorage.removeItem("authToken");
-      await AsyncStorage.removeItem("user");
-    }
-    return Promise.reject(error);
-  }
-);
 
 export interface User {
   id: string;
@@ -57,12 +77,12 @@ export interface ExpenseData {
 // Auth API
 export const authAPI = {
   login: async (data: LoginData) => {
-    const response = await api.post("/auth/login", data);
+    const response = await api.post("/auth/login", JSON.stringify(data));
     return response.data;
   },
 
   register: async (data: RegisterData) => {
-    const response = await api.post("/auth/register", data);
+    const response = await api.post("/auth/register", JSON.stringify(data));
     return response.data;
   },
 
@@ -113,6 +133,19 @@ export const categoriesAPI = {
 
   initCategories: async () => {
     const response = await api.post("/categories/init");
+    return response.data;
+  },
+};
+
+// Income API
+export const incomeAPI = {
+  getIncome: async () => {
+    const response = await api.get("/income/");
+    return response.data;
+  },
+
+  createIncome: async (data: { amount: number; source: string }) => {
+    const response = await api.post("/income", data);
     return response.data;
   },
 };
