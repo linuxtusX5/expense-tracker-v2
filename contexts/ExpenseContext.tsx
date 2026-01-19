@@ -1,5 +1,4 @@
 import { ExpenseData, expensesAPI } from "@/services/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 export interface Expense {
@@ -23,45 +22,27 @@ export interface Income {
 
 interface ExpenseContextType {
   expenses: Expense[];
-  // income: Income[];
-  // balance: number;
   loading: boolean;
   addExpense: (expense: ExpenseData) => Promise<void>;
-  // addIncome: (income: Omit<Income, "id">) => Promise<void>;
   deleteExpense: (id: string) => Promise<void>;
-  // deleteIncome: (id: string) => Promise<void>;
   updateExpense: (id: string, expense: Partial<ExpenseData>) => Promise<void>;
-  // updateIncome: (id: string, income: Partial<Income>) => Promise<void>;
   clearAllExpenses: () => Promise<void>;
-  setInitialBalance: (amount: number) => Promise<void>;
-  // refreshExpenses: () => Promise<void>;
   getTodayTotal: () => number;
   getWeeklyTotal: () => number;
   getMonthlyTotal: () => number;
-  // getTotalIncome: () => number;
-  // getMonthlyIncome: () => number;
   getCategoryTotals: () => Record<string, number>;
   getMonthlyExpenses: () => Record<string, number>;
 }
 
 const ExpenseContext = createContext<ExpenseContextType | undefined>(undefined);
 
-const STORAGE_KEY = "@expense_tracker_data";
-const INCOME_STORAGE_KEY = "@expense_tracker_income";
-const BALANCE_STORAGE_KEY = "@expense_tracker_balance";
-
 export function ExpenseProvider({ children }: { children: React.ReactNode }) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [income, setIncome] = useState<Income[]>([]);
-  const [initialBalance, setInitialBalanceState] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   // Load expenses from API on app start
   useEffect(() => {
     refreshExpenses();
-    // loadExpenses();
-    // loadIncome();
-    // loadInitialBalance();
   }, []);
 
   const refreshExpenses = async () => {
@@ -124,14 +105,6 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
   //     console.error("Error loading initial balance:", error);
   //   }
   // };
-
-  const saveExpenses = async (newExpenses: Expense[]) => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newExpenses));
-    } catch (error) {
-      console.error("Error saving expenses:", error);
-    }
-  };
 
   // const saveIncome = async (newIncome: Income[]) => {
   //   try {
@@ -216,11 +189,6 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const setInitialBalance = async (amount: number) => {
-    setInitialBalanceState(amount);
-    await AsyncStorage.setItem(BALANCE_STORAGE_KEY, amount.toString());
-  };
-
   const getTodayTotal = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -287,32 +255,18 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
     return monthlyTotals;
   };
 
-  // const balance =
-  //   initialBalance +
-  //   getTotalIncome() -
-  //   expenses.reduce((total, expense) => total + expense.amount, 0);
   const value: ExpenseContextType = {
     expenses: expenses.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     ),
-    // income: income.sort(
-    //   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    // ),
     loading,
-    // balance,
     addExpense,
-    // addIncome,
     deleteExpense,
-    // deleteIncome,
     updateExpense,
-    // updateIncome,
     clearAllExpenses,
-    setInitialBalance,
     getTodayTotal,
     getWeeklyTotal,
     getMonthlyTotal,
-    // getTotalIncome,
-    // getMonthlyIncome,
     getCategoryTotals,
     getMonthlyExpenses,
   };
