@@ -140,12 +140,17 @@ export const categoriesAPI = {
 // Income API
 export const incomeAPI = {
   getIncome: async () => {
-    const response = await api.get("/income/");
+    const response = await api.get("/income");
     return response.data;
   },
 
   createIncome: async (data: { amount: number; source: string }) => {
     const response = await api.post("/income", data);
+    return response.data;
+  },
+
+  deleteIncome: async (id: string) => {
+    const response = await api.delete(`/income/${id}`);
     return response.data;
   },
 };
