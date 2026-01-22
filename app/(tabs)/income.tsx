@@ -1,4 +1,4 @@
-import { useExpenseContext } from "@/contexts/ExpenseContext";
+import { useIncome } from "@/contexts/IncomeContext";
 import { INCOME_SOURCES } from "@/data/Source";
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
 import { formatMoney } from "@/utils/formatMoney";
@@ -25,8 +25,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 export default function IncomeScreen() {
-  const { income, addIncome, deleteIncome, balance, setInitialBalance } =
-    useExpenseContext();
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [selectedSource, setSelectedSource] = useState("");
@@ -35,6 +33,7 @@ export default function IncomeScreen() {
   const [initialBalanceAmount, setInitialBalanceAmount] = useState("");
   const currency = useCurrencyStore((state) => state.currency);
   const symbol = currency === "USD" ? "$" : "₱";
+  const { income, addIncome, totalIncome, deleteIncome } = useIncome();
 
   const handleAddIncome = async () => {
     if (!amount || !description || !selectedSource) {
@@ -57,9 +56,9 @@ export default function IncomeScreen() {
     try {
       await addIncome({
         amount: numericAmount,
-        description: description.trim(),
+        // description: description.trim(),
         source: selectedSource,
-        date: new Date(),
+        // date: new Date(),
       });
 
       // Reset form
@@ -93,9 +92,17 @@ export default function IncomeScreen() {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => deleteIncome(id),
+          onPress: () => {
+            deleteIncome(id);
+            Toast.show({
+              type: "success",
+              text1: "Success",
+              text2: "deleted income successfully!",
+              position: "top",
+            });
+          },
         },
-      ]
+      ],
     );
   };
 
@@ -112,7 +119,7 @@ export default function IncomeScreen() {
     }
 
     try {
-      await setInitialBalance(numericAmount);
+      // await setInitialBalance(numericAmount);
       setInitialBalanceAmount("");
       setShowBalanceSetup(false);
       Toast.show({
@@ -158,7 +165,9 @@ export default function IncomeScreen() {
                   {INCOME_SOURCES.find((s) => s.id === item.source)?.name ||
                     item.source}
                 </Text>
-                <Text style={styles.incomeDate}>{formatDate(item.date)}</Text>
+                <Text style={styles.incomeDate}>
+                  {formatDate(new Date(item.createdAt))}
+                </Text>
               </View>
             </View>
           </View>
@@ -169,7 +178,7 @@ export default function IncomeScreen() {
             </Text>
             <TouchableOpacity
               style={styles.deleteButton}
-              onPress={() => handleDeleteIncome(item.id)}
+              onPress={() => handleDeleteIncome(item._id)}
             >
               <Trash2 size={16} color="#EF4444" />
             </TouchableOpacity>
@@ -193,7 +202,7 @@ export default function IncomeScreen() {
           <View style={styles.balanceCard}>
             <Text style={styles.balanceAmount}>
               {symbol}
-              {formatMoney(balance)}
+              {formatMoney(totalIncome)}
             </Text>
             <TouchableOpacity
               style={styles.setBalanceButton}
@@ -334,7 +343,7 @@ export default function IncomeScreen() {
             <FlatList
               data={income.slice(0, 10)}
               renderItem={renderIncomeItem}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item._id}
               scrollEnabled={false}
             />
           )}
