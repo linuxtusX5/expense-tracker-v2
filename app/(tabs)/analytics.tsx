@@ -1,6 +1,7 @@
 import { CategoryChart } from "@/components/CategoryChart";
 import { MonthlyTrend } from "@/components/MonthlyTrend";
 import { useExpenseContext } from "@/contexts/ExpenseContext";
+import { useIncome } from "@/contexts/IncomeContext";
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
 import { formatMoney } from "@/utils/formatMoney";
 import {
@@ -12,14 +13,8 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AnalyticsScreen() {
-  const {
-    expenses,
-    balance,
-    getMonthlyTotal,
-    getMonthlyIncome,
-    getCategoryTotals,
-    getMonthlyExpenses,
-  } = useExpenseContext();
+  const { expenses, getMonthlyTotal, getCategoryTotals, getMonthlyExpenses } =
+    useExpenseContext();
   const currency = useCurrencyStore((state) => state.currency);
   const symbol = currency === "USD" ? "$" : "₱";
 
@@ -27,9 +22,22 @@ export default function AnalyticsScreen() {
   const monthlyExpenses = getMonthlyExpenses();
   const totalExpenses = expenses.reduce(
     (sum, expense) => sum + expense.amount,
-    0
+    0,
   );
-  const monthlyIncome = getMonthlyIncome();
+  const { totalIncome, income } = useIncome();
+
+  const now = new Date();
+
+  const monthlyIncome = income
+    .filter((i) => {
+      const d = new Date(i.createdAt);
+      return (
+        d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+      );
+    })
+    .reduce((sum, i) => sum + i.amount, 0);
+
+  const balance = totalIncome - totalExpenses;
 
   return (
     <SafeAreaView style={styles.container}>
