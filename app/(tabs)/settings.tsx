@@ -3,7 +3,7 @@ import { useExpenseContext } from "@/contexts/ExpenseContext";
 import { useIncome } from "@/contexts/IncomeContext";
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from "react-native-dropdown-picker";
 
 import { formatMoney } from "@/utils/formatMoney";
 import {
@@ -36,9 +36,20 @@ export default function SettingsScreen() {
   const setCurrency = useCurrencyStore((state) => state.setCurrency);
   const symbol = currency === "USD" ? "$" : "₱";
   const [name, setName] = useState("");
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(currency);
+  const [items, setItems] = useState<
+    Array<{ label: string; value: "USD" | "PHP" }>
+  >([
+    { label: "US Dollar ($)", value: "USD" },
+    { label: "Philippine Peso (₱)", value: "PHP" },
+  ]);
 
-  const handleCurrencyChange = (selectedCurrency: "USD" | "PHP") => {
-    setCurrency(selectedCurrency);
+  const handleCurrencyChange = (selectedCurrency: "USD" | "PHP" | null) => {
+    // setCurrency(selectedCurrency);
+    if (selectedCurrency) {
+      setCurrency(selectedCurrency);
+    }
   };
 
   const handleLogout = () => {
@@ -66,7 +77,7 @@ export default function SettingsScreen() {
             Alert.alert("Success", "All expenses have been cleared.");
           },
         },
-      ]
+      ],
     );
   };
 
@@ -80,7 +91,7 @@ export default function SettingsScreen() {
   // Total expense amount
   const totalAmount = expenses.reduce(
     (sum, expense) => sum + expense.amount,
-    0
+    0,
   );
 
   // Total income entries
@@ -129,15 +140,29 @@ export default function SettingsScreen() {
         {/* Currency Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Currency</Text>
-          <View style={styles.pickerWrapper}>
-            <Picker
-              selectedValue={currency}
-              onValueChange={handleCurrencyChange}
-              style={{ margin: 10, color: "#000" }}
-            >
-              <Picker.Item label="US Dollar ($)" value="USD" />
-              <Picker.Item label="Philippine Peso (₱)" value="PHP" />
-            </Picker>
+          <View style={{ zIndex: 1000, marginTop: 10 }}>
+            <DropDownPicker
+              listMode="SCROLLVIEW"
+              open={open}
+              value={value}
+              items={items}
+              setOpen={setOpen}
+              setValue={setValue}
+              setItems={setItems}
+              onChangeValue={handleCurrencyChange}
+              placeholder="Select currency"
+              style={{
+                borderColor: "#E5E7EB",
+                borderRadius: 10,
+                minHeight: 70,
+              }}
+              dropDownContainerStyle={{
+                borderColor: "#E5E7EB",
+              }}
+              textStyle={{
+                fontSize: 16,
+              }}
+            />
           </View>
         </View>
 
@@ -332,7 +357,7 @@ const styles = StyleSheet.create({
   },
   pickerWrapper: {
     overflow: "hidden",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#F3F4F6",
     borderRadius: 12,
     marginTop: 10,
     borderWidth: 1,
