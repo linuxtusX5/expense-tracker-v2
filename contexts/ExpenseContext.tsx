@@ -12,14 +12,6 @@ export interface Expense {
   updatedAt?: Date;
 }
 
-export interface Income {
-  id: string;
-  amount: number;
-  description: string;
-  source: string;
-  date: Date;
-}
-
 interface ExpenseContextType {
   expenses: Expense[];
   loading: boolean;

@@ -1,18 +1,23 @@
 import { incomeAPI } from "@/services/api";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Income = {
+export interface Income {
   _id: string;
   amount: number;
   source: string;
+  description: string;
   createdAt: string;
-};
+}
 
 type IncomeContextType = {
   income: Income[];
   totalIncome: number;
   refreshIncome: () => Promise<void>;
-  addIncome: (data: { amount: number; source: string }) => Promise<void>;
+  addIncome: (data: {
+    amount: number;
+    description: string;
+    source: string;
+  }) => Promise<void>;
   deleteIncome: (id: string) => Promise<void>;
 };
 
@@ -30,7 +35,11 @@ export const IncomeProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const addIncome = async (data: { amount: number; source: string }) => {
+  const addIncome = async (data: {
+    amount: number;
+    description: string;
+    source: string;
+  }) => {
     await incomeAPI.createIncome(data);
     await refreshIncome();
   };
