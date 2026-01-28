@@ -1,4 +1,4 @@
-import { useIncome } from "@/contexts/IncomeContext";
+import { Income, useIncome } from "@/contexts/IncomeContext";
 import { INCOME_SOURCES } from "@/data/Source";
 import { useCurrencyStore } from "@/stores/useCurrencyStore";
 import { formatMoney } from "@/utils/formatMoney";
@@ -56,7 +56,7 @@ export default function IncomeScreen() {
     try {
       await addIncome({
         amount: numericAmount,
-        // description: description.trim(),
+        description: description.trim(),
         source: selectedSource,
         // date: new Date(),
       });
@@ -147,7 +147,7 @@ export default function IncomeScreen() {
     });
   };
 
-  const renderIncomeItem = ({ item }: { item: any }) => {
+  const renderIncomeItem = ({ item }: { item: Income }) => {
     const sourceColor =
       INCOME_SOURCES.find((s) => s.id === item.source)?.color || "#6B7280";
 
@@ -162,8 +162,7 @@ export default function IncomeScreen() {
               <Text style={styles.incomeDescription}>{item.description}</Text>
               <View style={styles.incomeMetadata}>
                 <Text style={styles.incomeSource}>
-                  {INCOME_SOURCES.find((s) => s.id === item.source)?.name ||
-                    item.source}
+                  {INCOME_SOURCES.find((s) => s.id === item.source)?.name}
                 </Text>
                 <Text style={styles.incomeDate}>
                   {formatDate(new Date(item.createdAt))}
